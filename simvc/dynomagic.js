@@ -1,0 +1,337 @@
+/*
+ * Dynomagic Javascript Library
+ * Copyright 2010, Eugene Maslovich
+ * ehpc@yandex.ru
+ * http://ehpc.org.ru/dynomagic/
+ *
+ */
+
+function DynomagicI18n(){}
+DynomagicI18n.cancelButton = "отмена";
+DynomagicI18n.saveButton = "сохранить";
+
+function DynomagicInputType(){}
+DynomagicInputType.textbox = "Textbox";
+DynomagicInputType.rich = "Rich";
+
+function DynomagicEditorType(){}
+DynomagicEditorType.textbox = "dynoInput" + DynomagicInputType.textbox;
+DynomagicEditorType.rich = "dynoInput" + DynomagicInputType.rich;
+
+function Dynomagic()
+{
+    var dynoTablePrefix = "dynoTable_";
+    var dynoFieldPrefix = "dynoField_";
+    var dynoUriPrefix = "dynoUri";
+    var dynoUriUpdatePrefix = "dynoUriUpdate";
+    var dynoInputTypePrefix = "dynoInputType";
+    /* [ 
+     *    [
+     *      tableName,
+     *      tableDom,
+     *      uri,
+     *      id,
+     *      fields => [
+     *                  fieldName,
+     *                  fieldDom,
+     *                  fieldValue,
+     *                  editorDom,
+     *                  editorType
+     *                ]
+     *    ],
+     *    [
+     *      ...
+     *    ]
+     * ]
+     */
+    var dynoTables = new Array();
+
+
+    var extractValueFromClass = function (classPrefix, el)
+    {
+        var className = el.attr("className");
+        if (className)
+        {
+            classes = el.attr("className").split(" ");
+            for (var i = 0; i < classes.length; i++)
+            {
+                if (classes[i].indexOf(classPrefix) >= 0)
+                {
+                    var value = classes[i].replace(classPrefix, "");
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    // Returns array of elements which class attribute starts with prefix
+    // el - from where to start searching
+    // RETURN: [["dom"=>jquery, "value"=>string], ...]
+    var findByClassPrefix = function (classPrefix, el)
+    {
+        var res = new Array();
+        el.find("*").each(function () {
+            var className = $(this).attr("className");
+            if (className)
+            {
+                var value = extractValueFromClass(classPrefix, $(this));
+                if (value !== null)
+                {
+                    var entry = new Array();
+                    entry["dom"] = $(this);
+                    entry["value"] = value;
+                    var value2 = extractValueFromClass(dynoInputTypePrefix, $(this));
+                    if (value2 === null)
+                        entry["inputType"] = DynomagicInputType.textbox;
+                    else
+                        entry["inputType"] = value2;
+                    res.push(entry);
+                }
+            }
+        });
+        return res;
+    }
+
+    // Fill editor
+    var fillEditorN = function (n)
+    {
+        for (j = 0; j < dynoTables[n]["fields"].length; j++)
+        {
+            var fieldValue = dynoTables[n]["fields"][j]["fieldValue"];
+            var editorDom = dynoTables[n]["fields"][j]["editorDom"];
+            var editorType = dynoTables[n]["fields"][j]["editorType"];
+            if (editorType == DynomagicEditorType.textbox)
+            {
+                editorDom.val(fieldValue);
+            }
+            else if (editorType == DynomagicEditorType.rich)
+            {
+                editorDom.val(fieldValue);
+            }
+        }
+    }
+
+    // Fill editor
+    var saveEditorN = function (n)
+    {
+        var tableDom = dynoTables[n]["tableDom"];
+        progressShowProgress(tableDom, "идет сохранение");
+
+        var res = {};
+        for (j = 0; j < dynoTables[n]["fields"].length; j++)
+        {
+            var editorDom = dynoTables[n]["fields"][j]["editorDom"];
+            var editorType = dynoTables[n]["fields"][j]["editorType"];
+            var editorValue;
+            if (editorType == DynomagicEditorType.textbox)
+            {
+                editorValue = editorDom.val();
+            }
+            else if (editorType == DynomagicEditorType.rich)
+            {
+                editorValue = editorDom.val();
+            }
+            var fieldName = dynoTables[n]["fields"][j]["fieldName"];
+            res[fieldName] = editorValue;
+        }
+        res.id = dynoTables[n]["id"];
+        var uriUpdate = dynoTables[n]["uriUpdate"];
+        $.post(
+            uriUpdate,
+            {data : JSON.stringify(res)},
+            function (data) {
+                progressHideProgress(tableDom);
+                fillN(n, false);
+            }
+        );
+    }
+
+    // Find all dyno fields
+    // get tables
+    this.run = function()
+    {
+        var tables = findByClassPrefix(dynoTablePrefix, $("*"));
+        for (var i = 0; i < tables.length; i++)
+        {
+            //get uri
+            var uri = $.trim(findByClassPrefix(dynoUriPrefix, tables[i]["dom"])[0]["dom"].text());
+            var uriUpdate = $.trim(findByClassPrefix(dynoUriUpdatePrefix, tables[i]["dom"])[0]["dom"].text());
+            var table = new Array();
+            table["tableName"] = tables[i]["value"];
+            table["tableDom"] = tables[i]["dom"];
+            table["uri"] = uri;
+            table["uriUpdate"] = uriUpdate;
+            table["fields"] = new Array();
+            // get fields
+            var fields = findByClassPrefix(dynoFieldPrefix, tables[i]["dom"]);
+            for (var j = 0; j < fields.length; j++)
+            {
+                var fieldName = fields[j]["value"];
+                var fieldDom = fields[j]["dom"];
+                var fieldInputType = fields[j]["inputType"];
+                var field = new Array();
+                field["fieldName"] = fieldName;
+                field["fieldDom"] = fieldDom;
+                field["fieldInputType"] = fieldInputType;
+                table["fields"].push(field);
+            }
+            dynoTables.push(table);
+        }
+        this.fillAll(true);
+    }
+
+    // Create Nth editor
+    var createEditorN = function (n)
+    {
+        var tableName = dynoTables[n]["tableName"];
+        var tableDom = dynoTables[n]["tableDom"];
+        html = '<div class="dynoEditor"></div>';
+        var dynoEditor = $(html);
+        dynoEditor.appendTo(tableDom);
+        for (j = 0; j < dynoTables[n]["fields"].length; j++)
+        {
+            var fieldName = dynoTables[n]["fields"][j]["fieldName"];
+            var fieldDom = dynoTables[n]["fields"][j]["fieldDom"];
+            var fieldInputType = dynoTables[n]["fields"][j]["fieldInputType"];
+            var editorDom;
+            var editorType = "dynoInput" + fieldInputType;
+            if (fieldInputType == DynomagicInputType.textbox)
+            {
+                html = '<input id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '" type="text" />';
+                editorDom = $(html);
+                editorDom.appendTo(dynoEditor);
+            }
+            else if (fieldInputType == DynomagicInputType.rich)
+            {
+                html = '<textarea id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '"></textarea>';
+                editorDom = $(html);
+                editorDom.appendTo(dynoEditor);
+            }
+            if (!fieldDom.is(":visible"))
+                editorDom.hide();
+            dynoTables[n]["fields"][j]["editorDom"] = editorDom;
+            dynoTables[n]["fields"][j]["editorType"] = editorType;
+            // positioning
+            editorDom.css("top", fieldDom.offset().top + parseInt(fieldDom.css("borderTopWidth"), 10) - parseInt(editorDom.css("borderTopWidth"), 10) - 1);
+            editorDom.css("left", fieldDom.offset().left + parseInt(fieldDom.css("borderLeftWidth"), 10) - parseInt(editorDom.css("borderLeftWidth"), 10));
+            editorDom.css("width", fieldDom.css("width"));
+            editorDom.css("height", fieldDom.css("height"));
+            if (fieldInputType == DynomagicInputType.rich)
+            {
+                //setupTinyMce(editorDom, editorDom.css("top"), editorDom.css("left"), editorDom.css("width"), editorDom.css("height"));
+            }
+        }
+        // save/cancel buttons
+        html = '<div class="dynoButtons"></div>';
+        var buttonsDom = $(html);
+        buttonsDom.appendTo(dynoEditor);
+        html = '<input id="dynoCancel' + fieldDom.attr('id') + '" class="dynoCancel" type="button" value="' + DynomagicI18n.cancelButton + '" />';
+        var cancelDom = $(html);
+        cancelDom.appendTo(buttonsDom);
+        cancelDom.click(function () {
+            dynoEditor.hide();
+            fillEditorN(n);
+        });
+        html = '<input id="dynoSave' + fieldDom.attr('id') + '" class="dynoSave" type="button" value="' + DynomagicI18n.saveButton + '" />';
+        var saveDom = $(html);
+        saveDom.appendTo(buttonsDom);
+        saveDom.click(function () {
+            dynoEditor.hide();
+            saveEditorN(n);
+        });
+        // positioning buttons
+        buttonsDom.css("top", tableDom.offset().top + parseInt(tableDom.css("height"), 10));
+        saveDom.css("left", cancelDom.offset().left + parseInt(cancelDom.css("width"), 10));
+
+        // show/hide button
+        html = '<div class="dynoShowHideButton"><img src="/simvc/img/showhide.png" width="16" height="16" /></div>';
+        var showhideDom = $(html);
+        showhideDom.appendTo(tableDom);
+        showhideDom.css("top", tableDom.offset().top + 5);
+        showhideDom.css("left", tableDom.offset().left + parseInt(tableDom.css("width"), 10) - parseInt(showhideDom.css("width"), 10));
+        showhideDom.click(function () {
+            if (dynoEditor.is(":visible"))
+            {
+                dynoEditor.hide();
+            }
+            else
+            {
+                dynoEditor.show();
+            }
+        });
+        showhideDom.hide();
+
+        dynoEditor.hide();
+        tableDom.hover(
+            function () {
+                showhideDom.show();
+            },
+            function () {
+                showhideDom.hide();
+            }
+        );
+    }
+
+
+    // Fills Nth element with data
+    var fillN = function (n, createEditor)
+    {
+        var tableDom = dynoTables[n]["tableDom"];
+        progressShowProgress(tableDom, "загрузка данных");
+        var tableName = dynoTables[n]["tableName"];
+        var uri = dynoTables[n]["uri"];
+        $.getJSON(uri, function(data) {
+            var table = eval("data.db."+tableName);
+            for (j = 0; j < dynoTables[n]["fields"].length; j++)
+            {
+                var fieldName = dynoTables[n]["fields"][j]["fieldName"];
+                var fieldDom = dynoTables[n]["fields"][j]["fieldDom"];
+                var fieldInputType = dynoTables[n]["fields"][j]["fieldInputType"];
+                var fieldValue = eval("table."+fieldName);
+                dynoTables[n]["fields"][j]["fieldValue"] = fieldValue;
+                fieldDom.html(fieldValue);
+            }
+            var rowId = eval("table.id");
+            dynoTables[n]["id"] = rowId;
+            if (createEditor)
+                createEditorN(n);
+            fillEditorN(n);
+            progressHideProgress(tableDom);
+        });
+    }
+
+    // Fill element data by it's tableName
+    this.fillTable = function (tableName)
+    {
+        for (i = 0; i < dynoTables.length; i++)
+        {
+            if (dynoTables[i]["tableName"] == tableName)
+            {
+                fillN(i);
+            }
+        }
+    }
+
+    // Fill all available elements
+    this.fillAll = function (createEditor)
+    {
+        for (i = 0; i < dynoTables.length; i++)
+        {
+            fillN(i, createEditor);
+        }
+    }
+
+
+}
+
+
+/*
+ * table, field
+ * 1. fetch data from server
+ * 2. fill div with data
+ * 3. edit button
+ * 4. editor
+ * 5. pull data to server
+ * 6. refresh
+ */

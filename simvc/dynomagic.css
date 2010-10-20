@@ -1,0 +1,24 @@
+.dynoUri, .dynoUriUpdate {
+    display: none;
+}
+
+.dynoInputTextbox, .dynoInputRich {
+    position: absolute;
+    z-index: 1000;
+    border: 1px solid #000000;
+    /*padding: 5px;*/
+    /*display: none;*/
+}
+
+.dynoButtons, .dynoShowHideButton {
+    position: absolute;
+    z-index: 1000;
+}
+
+.dynoShowHideButton {
+    cursor: pointer;
+}
+
+.dynoButtons {
+    margin: 10px;
+}
