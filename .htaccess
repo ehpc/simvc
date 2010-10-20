@@ -1,0 +1,17 @@
+﻿
+RewriteEngine On
+
+
+# If someone is trying to access site internals, throw an error
+RewriteRule ^(.*\.(php|htm|html))$ error [NC]
+
+# Check if uri is physically present
+#RewriteCond $1 -s [OR]
+#RewriteCond $1 -l [OR]
+#RewriteCond $1 -d
+# Only if uri contains dot char (aka is a filename)
+RewriteRule ^(.*\.(.*))$ - [NC,L]
+
+
+# All other requests are redirected to index.php
+RewriteRule ^.*$ index.php [NC,L]
