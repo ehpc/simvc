@@ -3,7 +3,7 @@
  * Simvc PHP Framework
  * Copyright 2010, Eugene Maslovich
  * ehpc@yandex.ru
- * http://ehpc.org.ru/simvc/
+ * http://ehpc.org.ru/simvcframework/
  *
  */
 

@@ -198,15 +198,16 @@ function Dynomagic()
             var editorType = "dynoInput" + fieldInputType;
             if (fieldInputType == DynomagicInputType.textbox)
             {
-                html = '<input id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '" type="text" />';
+                html = '<input id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '" type="text" spellcheck="false" />';
                 editorDom = $(html);
                 editorDom.appendTo(dynoEditor);
             }
             else if (fieldInputType == DynomagicInputType.rich)
             {
-                html = '<textarea id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '"></textarea>';
+                html = '<textarea id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '" spellcheck="false"></textarea>';
                 editorDom = $(html);
                 editorDom.appendTo(dynoEditor);
+                editorDom.TextAreaResizer();
             }
             if (!fieldDom.is(":visible"))
                 editorDom.hide();
@@ -271,6 +272,10 @@ function Dynomagic()
                 showhideDom.hide();
             }
         );
+            
+        dynoEditor.css("top", tableDom.offset().top + parseInt(tableDom.css("borderTopWidth"), 10) - parseInt(dynoEditor.css("borderTopWidth"), 10) - 1);
+        dynoEditor.css("left", tableDom.offset().left + parseInt(tableDom.css("borderLeftWidth"), 10) - parseInt(dynoEditor.css("borderLeftWidth"), 10));
+
     }
 
 

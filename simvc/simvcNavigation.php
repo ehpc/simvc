@@ -3,7 +3,7 @@
  * Simvc PHP Framework
  * Copyright 2010, Eugene Maslovich
  * ehpc@yandex.ru
- * http://ehpc.org.ru/simvc/
+ * http://ehpc.org.ru/simvcframework/
  *
  */
 
@@ -29,11 +29,20 @@ class SimvcNavigation
                 {
                     if ($route['text'] != "")
                     {
-                        $navigation[] = array('uri' => $route['route'], 'title' => $route['text'], 'text' => $route['route']);
+                        if ($route['pos'] === null)
+                        {
+                            $index = PHP_INT_MAX;
+                        }
+                        else
+                        {
+                            $index = $route['pos'];
+                        }
+                        $navigation[$index] = array('uri' => $route['route'], 'title' => $route['text'], 'text' => $route['route']);
                     }
                 }
             }
         }
+        ksort($navigation);
         return $navigation;
     }
 }
