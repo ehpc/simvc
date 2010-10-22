@@ -46,7 +46,7 @@ function Dynomagic()
      */
     var dynoTables = new Array();
 
-
+    // Get suffix from class
     var extractValueFromClass = function (classPrefix, el)
     {
         var className = el.attr("className");
@@ -99,6 +99,7 @@ function Dynomagic()
         for (j = 0; j < dynoTables[n]["fields"].length; j++)
         {
             var fieldValue = dynoTables[n]["fields"][j]["fieldValue"];
+            fieldValue = textTransformHtmlSpecial(fieldValue, true);
             var editorDom = dynoTables[n]["fields"][j]["editorDom"];
             var editorType = dynoTables[n]["fields"][j]["editorType"];
             if (editorType == DynomagicEditorType.textbox)
@@ -132,6 +133,8 @@ function Dynomagic()
             {
                 editorValue = editorDom.val();
             }
+            // escape
+            editorValue = textTransformHtmlSpecial(editorValue, false);
             var fieldName = dynoTables[n]["fields"][j]["fieldName"];
             res[fieldName] = editorValue;
         }
@@ -295,13 +298,14 @@ function Dynomagic()
                 var fieldInputType = dynoTables[n]["fields"][j]["fieldInputType"];
                 var fieldValue = eval("table."+fieldName);
                 dynoTables[n]["fields"][j]["fieldValue"] = fieldValue;
-                fieldDom.html(fieldValue);
+                fieldDom.html(textTransformToHtml(fieldValue));
             }
             var rowId = eval("table.id");
             dynoTables[n]["id"] = rowId;
             if (createEditor)
                 createEditorN(n);
             fillEditorN(n);
+            SyntaxHighlighter.highlight();
             progressHideProgress(tableDom);
         });
     }
