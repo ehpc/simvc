@@ -27,6 +27,8 @@ class SimvcNavigation
     public function getItems($withoutIndex = false)
     {
         $res = $this->navItems;
+        if (empty($res))
+            return $res;
         if ($withoutIndex)
         {
             foreach ($res as $key => $value)
