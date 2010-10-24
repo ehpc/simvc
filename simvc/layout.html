@@ -14,8 +14,8 @@
 
 <?php if ($this->data("indexPage") == false): ?>
     <div id="navigation">
-<?php foreach ($this->navigation->getItems($withoutIndex = false) as $item): ?>
-<span class="navItem"><a href="<?php echo $item['uri'] ?>" title="<?php echo $item['title'] ?>"><?php echo $item['text'] ?></a></span>
+<?php foreach ($this->navigation->getItems() as $item): ?>
+<span class="navItem"><a href="<?php echo $item->uri ?>" title="<?php echo $item->description ?>"><?php echo $item->label ?></a></span>
 <?php endforeach ?>
     </div>
 <?php endif ?>

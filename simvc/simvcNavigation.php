@@ -11,38 +11,38 @@
 class SimvcNavigation
 {
     public $simvc = null;
+    private $navItems = array();
 
     function  __construct($simvc)
     {
         $this->simvc = $simvc;
     }
 
-    public function getItems($withoutIndex)
+    public function addItem($uri, $label, $description, $priority)
     {
-        $navigation = array();
-        $rt = $this->simvc->routeTable;
-        foreach ($rt as $route)
+        $this->navItems[] = (object)array('uri' => $uri, 'label' => $label, 'description' => $description, 'priority' => $priority);
+    }
+
+
+    public function getItems($withoutIndex = false)
+    {
+        $res = $this->navItems;
+        if ($withoutIndex)
         {
-            if (!(($route['route'] == "/") && ($withoutIndex)))
+            foreach ($res as $key => $value)
             {
-                if ($route['method'] == "GET")
+                if ($res[$key]->uri == '/')
                 {
-                    if ($route['text'] != "")
-                    {
-                        if ($route['pos'] === null)
-                        {
-                            $index = PHP_INT_MAX;
-                        }
-                        else
-                        {
-                            $index = $route['pos'];
-                        }
-                        $navigation[$index] = array('uri' => $route['route'], 'title' => $route['text'], 'text' => $route['route']);
-                    }
+                    unset($res[$key]);
                 }
             }
         }
-        ksort($navigation);
-        return $navigation;
+        foreach ($res as $key => $row)
+        {
+            $arr[$key]  = $row->priority;
+        }
+        array_multisort($arr, SORT_ASC, $res);
+
+        return $res;
     }
 }
