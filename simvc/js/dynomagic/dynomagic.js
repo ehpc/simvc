@@ -354,9 +354,17 @@ function Dynomagic()
                 showhideDom.hide();
             }
         );
-            
-        dynoEditor.css("top", tableDom.offset().top + parseInt(tableDom.css("borderTopWidth"), 10) - parseInt(dynoEditor.css("borderTopWidth"), 10) - 1);
-        dynoEditor.css("left", tableDom.offset().left + parseInt(tableDom.css("borderLeftWidth"), 10) - parseInt(dynoEditor.css("borderLeftWidth"), 10));
+        var tableDomborderTopWidth = parseInt(tableDom.css("borderTopWidth"), 10);
+        if (isNaN(tableDomborderTopWidth)) tableDomborderTopWidth = 0;
+        var dynoEditorborderTopWidth = parseInt(dynoEditor.css("borderTopWidth"), 10);
+        if (isNaN(dynoEditorborderTopWidth)) dynoEditorborderTopWidth = 0;
+        var tableDomborderLeftWidth = parseInt(tableDom.css("borderLeftWidth"), 10);
+        if (isNaN(tableDomborderLeftWidth)) tableDomborderLeftWidth = 0;
+        var dynoEditorborderLeftWidth = parseInt(dynoEditor.css("borderLeftWidth"), 10);
+        if (isNaN(dynoEditorborderLeftWidth)) dynoEditorborderLeftWidth = 0;
+
+        dynoEditor.css("top", tableDom.offset().top + tableDomborderTopWidth - dynoEditorborderTopWidth - 1);
+        dynoEditor.css("left", tableDom.offset().left + tableDomborderLeftWidth - dynoEditorborderLeftWidth);
 
     }
 
@@ -386,15 +394,7 @@ function Dynomagic()
                 if (fieldSyntax)
                 {
                     fieldDom.html(textTransformToHtml(fieldValue));
-                    fieldDom.find("a.dynoYoutube").each(function () {
-                        var width = $(this).attr("width");
-                        var height = $(this).attr("height");
-                        var url = $(this).attr("href");
-                        $(this).youtubin({
-                            swfWidth : width,
-                            swfHeight : height
-                        });
-                    });
+                    youtubinize(fieldDom);
                 }
                 else
                 {
@@ -435,7 +435,25 @@ function Dynomagic()
         }
     }
 
+    var youtubinize = function(dom)
+    {
+        dom.find("a.dynoYoutube").each(function () {
+            var width = $(this).attr("width");
+            var height = $(this).attr("height");
+            var url = $(this).attr("href");
+            $(this).youtubin({
+                swfWidth : width,
+                swfHeight : height
+            });
+        });
+    }
 
+    this.staticRun = function (value, dom)
+    {
+        dom.html(textTransformToHtml(value));
+        youtubinize(dom);
+        SyntaxHighlighter.all();
+    }
 }
 
 

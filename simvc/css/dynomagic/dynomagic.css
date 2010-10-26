@@ -31,6 +31,14 @@ div.dynoYoutube {
     text-align: center;
 }
 
+.dynoInvisible {
+    display: none;
+}
+
+.dynoHidden {
+    display: none;
+}
+
 /* resizable textarea */
 div.grippie {
 background:#EEEEEE;

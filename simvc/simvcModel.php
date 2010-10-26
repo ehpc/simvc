@@ -22,7 +22,7 @@ class SimvcModel
         $this->user = $modelUser;
         $this->password = $modelPassword;
 
-        require "rb.php";
+        require "rb12lg.php";
         if ($this->user == "")
         {
             R::setup($this->dsn);

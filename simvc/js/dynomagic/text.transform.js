@@ -116,7 +116,10 @@ function textTransformToHtml(text)
     for (word in words)
     {
         color = words[word];
-        html = replaceTextNotBetween(html, "[off]", "[/off]", word, '<span style="color: #' + color + '">' + word + '</span>');
+        var rx1 = new RegExp("((\\s)|(<br/>))"+word+"((\\s)|(<br/>))", "g");
+        html = replaceTextNotBetween(html, "[off]", "[/off]", function (text) {
+            return text.replace(rx1, '$1<span style="color: #' + color + '">' + word + '</span>$4');
+        });
     }
 
     // remove off tags
