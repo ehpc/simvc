@@ -11,7 +11,7 @@
 class SimvcAuth
 {
     public $simvc = null;
-    public $dbTable = "simvcAuth";
+    public $dbTable = "simvcauth";
     public $dbFieldLogin = "login";
     public $dbFieldPassword = "password";
     public $dbFieldGroup = "group";
@@ -64,7 +64,7 @@ class SimvcAuth
 
     function tryLogin($login, $password)
     {
-        $row = reset($this->simvc->model->getRows($this->dbTable,  $this->dbFieldLogin." = '".$login."'"));
+        $row = reset($this->simvc->model->getRows($this->dbTable,  " ".$this->dbFieldLogin." = '".$login."' "));
         if (empty($row))
         {
             return false;
