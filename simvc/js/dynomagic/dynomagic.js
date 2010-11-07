@@ -262,7 +262,7 @@ function Dynomagic()
             }
             else if (fieldInputType == DynomagicInputType.rich)
             {
-                html = '<textarea id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '" spellcheck="false"></textarea>';
+                html = '<textarea id="dyno' + fieldDom.attr('id') + '" class="' + editorType + '"></textarea>';
                 editorDom = $(html);
                 editorDom.appendTo(dynoEditor);
             }
@@ -332,7 +332,7 @@ function Dynomagic()
         var showhideDom = $(html);
         showhideDom.appendTo(tableDom);
         showhideDom.css("top", tableDom.offset().top + 5);
-        showhideDom.css("left", tableDom.offset().left + parseInt(tableDom.css("width"), 10) - parseInt(showhideDom.css("width"), 10));
+        showhideDom.css("left", parseInt(tableDom.css("width"), 10) - parseInt(showhideDom.css("width"), 10));
         showhideDom.click(function () {
             if (dynoEditor.is(":visible"))
             {
@@ -364,7 +364,7 @@ function Dynomagic()
         if (isNaN(dynoEditorborderLeftWidth)) dynoEditorborderLeftWidth = 0;
 
         dynoEditor.css("top", tableDom.offset().top + tableDomborderTopWidth - dynoEditorborderTopWidth - 1);
-        dynoEditor.css("left", tableDom.offset().left + tableDomborderLeftWidth - dynoEditorborderLeftWidth);
+        dynoEditor.css("left", tableDomborderLeftWidth - dynoEditorborderLeftWidth);
 
     }
 

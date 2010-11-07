@@ -1,11 +1,11 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
     <title><?php echo $this->pageTitle ?></title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png?v1" />
     <?php echo $this->styles() ?>
     <?php echo $this->scripts() ?>
 </head>
@@ -13,14 +13,43 @@
 <body>
 
 <?php if ($this->data("indexPage") == false): ?>
+
+    <div class="navigation-wrapper">
     <div id="navigation">
-<?php foreach ($this->navigation->getItems() as $item): ?>
-<span class="navItem"><a href="<?php echo $item->uri ?>" title="<?php echo $item->description ?>"><?php echo $item->label ?></a></span>
-<?php endforeach ?>
+        <div class="section" style="margin-right: 104px;">
+            <div class="bottom"><div class="label"><a href="/">главная</a></div></div>
+        </div>
+        <div class="section" style="margin-right: 104px;">
+            <div class="body">
+                <div class="bodyTop"> </div>
+                <div class="item"><a href="/simvcframework/">Simvc PHP Framework</a></div>
+                <div class="item"><a href="/dynomagic/">Dynomagic</a></div>
+                <div class="item"><a href="/klavbot/">Бот для клавогонок</a></div>
+                <div class="bodyBottom"> </div>
+            </div>
+            <div class="bottom"><div class="label">проекты</div></div>
+        </div>
+        <div class="section">
+            <div class="body">
+                <div class="bodyTop"> </div>
+                <div class="item"><a href="/hypnotoad/">Гипножаба</a></div>
+                <div class="item"><a href="/randlet/">Мешалка букв</a></div>
+                <div class="item"><a href="/music/">Моя музыка</a></div>
+                <div class="bodyBottom"> </div>
+            </div>
+            <div class="bottom"><div class="label">разное</div></div>
+        </div>
     </div>
-<?php endif ?>
+    </div>
+
+    <div id="main-wrapper">
+        <?php include $this->layoutBodyTemplate ?>
+    </div>
+<?php else: ?>
 
     <?php include $this->layoutBodyTemplate ?>
+
+<?php endif ?>
 
 </body>
 </html>
