@@ -97,7 +97,7 @@ function textTransformToHtml(text)
             .replace(/\[center\](.+?)\[\/center\]/g, '<div style="text-align: center;">$1</div>')
             .replace(/\[a(.*?)\](.+?)\[\/a\]/g, '<a $1 target="_blank">$2</a>')
             .replace(/\[youtube width="(\d+?)" height="(\d+?)" url="(.+?)"\]/g, '<div class="dynoYoutube"><a class="dynoYoutube" width="$1" height="$2" href="$3" >dynoYoutube</a></div>')
-            .replace(/<br\/>(\d)\. /g, '<br/><b class="numlist">$1.</b> ')
+            .replace(/<br\/>(\d{1,3})\. /g, '<br/><b class="numlist">$1.</b> ')
             .replace(/\[lsb\]/g, '&#91;').replace(/\[rsb\]/g, '&#93;');
     });
 

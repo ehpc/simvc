@@ -331,7 +331,7 @@ function Dynomagic()
         html = '<div class="dynoShowHideButton"><img src="' + dynomagicImgUri + 'showhide.png" width="16" height="16" /></div>';
         var showhideDom = $(html);
         showhideDom.appendTo(tableDom);
-        showhideDom.css("top", tableDom.offset().top + 5);
+        showhideDom.css("top", "0px");//tableDom.offset().top + 5);
         showhideDom.css("left", parseInt(tableDom.css("width"), 10) - parseInt(showhideDom.css("width"), 10));
         showhideDom.click(function () {
             if (dynoEditor.is(":visible"))
