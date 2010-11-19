@@ -22,6 +22,7 @@ class SimvcModel
         $this->user = $modelUser;
         $this->password = $modelPassword;
 
+        // Init Redbean
         require "rb12lg.php";
         if ($this->user == "")
         {
@@ -33,18 +34,22 @@ class SimvcModel
         }
     }
 
+    // Get row from table by id
     public function getRow($table, $id)
     {
         $row = R::load($table, $id);
         return $row;
     }
 
+    // Get rows based on filtering expression
     public function getRows($table, $filter)
     {
         $rows = Finder::where($table, $filter);
         return $rows;
     }
 
+    // Change row data
+    // data should be of specific format
     public function updateRow($table, $dataWithId, $autoFill = false)
     {
         $row = R::load($table, $dataWithId->id);
@@ -54,8 +59,10 @@ class SimvcModel
             {
                 if ($key != "id")
                 {
+                    // We can automatically fill some fields
                     if ($autoFill)
                     {
+                        // For example this last update field
                         if ($key == "lastUpdate")
                         {
                             $dataWithId->$key = date("c");
@@ -69,6 +76,7 @@ class SimvcModel
         return $row;
     }
 
+    // Add row to table
     public function addRow($table, $data)
     {
         $row = R::dispense($table);

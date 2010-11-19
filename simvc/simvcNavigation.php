@@ -7,7 +7,7 @@
  *
  */
 
-
+// Class for storing navigation items
 class SimvcNavigation
 {
     public $simvc = null;
@@ -18,12 +18,13 @@ class SimvcNavigation
         $this->simvc = $simvc;
     }
 
+    // Add navigation item
     public function addItem($uri, $label, $description, $priority)
     {
         $this->navItems[] = (object)array('uri' => $uri, 'label' => $label, 'description' => $description, 'priority' => $priority);
     }
 
-
+    // Get sorted array of navigation items
     public function getItems($withoutIndex = false)
     {
         $res = $this->navItems;

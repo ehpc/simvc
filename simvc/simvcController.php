@@ -8,6 +8,7 @@
  */
 
 
+// Base class for Simvc controller mechanism
 class SimvcController
 {
     public $controllerPath = null;

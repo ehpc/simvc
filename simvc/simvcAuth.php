@@ -8,6 +8,7 @@
  */
 
 
+// Authentication mechanism
 class SimvcAuth
 {
     public $simvc = null;
@@ -51,17 +52,20 @@ class SimvcAuth
         }
     }
 
+    // Get current login
     function getLogin()
     {
         return $this->simvc->session("simvcAuthLogin");
     }
 
+    // Hash function for password encryption
     private function hashFunction($password, $login)
     {
         $token = "simvc_token";
         return md5(md5(md5($password).$token).$login);
     }
 
+    // Login with given credentials
     function tryLogin($login, $password)
     {
         $row = reset($this->simvc->model->getRows($this->dbTable,  " ".$this->dbFieldLogin." = '".$login."' "));
@@ -85,11 +89,13 @@ class SimvcAuth
         }
     }
 
+    // Logout
     function logout()
     {
         $this->simvc->session("simvcAuthLogin", null, true);
     }
 
+    // Add new user to database
     public function addUser($login, $password, $group)
     {
         $data = new stdClass();
