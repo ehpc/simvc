@@ -30,6 +30,7 @@ function Dynomagic()
     var dynoHidden = "dynoHidden";
     var dynoInvisible = "dynoInvisible";
     var dynoSyntax = "dynoSyntax";
+    var onLoad = null;
     /* [ 
      *    [
      *      tableName,
@@ -195,8 +196,9 @@ function Dynomagic()
 
     // Find all dyno fields
     // get tables
-    this.run = function()
+    this.run = function(onLoadF)
     {
+        onLoad = onLoadF;
         var tables = findByClassPrefix(dynoTablePrefix, $("*"));
         for (var i = 0; i < tables.length; i++)
         {
@@ -411,6 +413,10 @@ function Dynomagic()
                 SyntaxHighlighter.highlight();
             }
             progressHideProgress(tableDom);
+            if (typeof(onLoad) == "function")
+            {
+                onLoad();
+            }
         });
     }
 

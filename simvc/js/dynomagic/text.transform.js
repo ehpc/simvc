@@ -61,7 +61,15 @@ function replaceTextBetween(text, leftText, rightText, searchText, replaceText)
         if (part.indexOf(leftText) != -1)
         {
             var splits = part.split(leftText);
-            splits[splits.length-1] = splits[splits.length-1].split(searchText).join(replaceText);
+            if (typeof(searchText) == "function")
+            {
+                splits[splits.length-1] = searchText(splits[splits.length-1]);
+            }
+            else
+            {
+                splits[splits.length-1] = splits[splits.length-1].split(searchText).join(replaceText);
+            }
+            //splits[splits.length-1] = splits[splits.length-1].split(searchText).join(replaceText);
             part = splits.join(leftText);
             parts[i] = part;
         }
@@ -101,6 +109,11 @@ function textTransformToHtml(text)
             .replace(/\[lsb\]/g, '&#91;').replace(/\[rsb\]/g, '&#93;');
     });
 
+    html = replaceTextBetween(html, "[raw]", "[/raw]", function (text) {
+        return text.replace(/&lt;/gi, "<").replace(/&gt;/gi, ">")
+            .replace(/&amp;/gi, "&");
+    });
+
     // word-highliter
     var words = new Array();
     var rx = /\[wh=([abcdefABCDEF0-9]+?)\](.+?)\[wh\]/g;
@@ -125,7 +138,8 @@ function textTransformToHtml(text)
 
     // remove off tags
     html = html.replace(/\[off\](.*?)\[\/off\]/gi, "$1");
-   
+    // remove raw tags
+    html = html.replace(/\[raw\](.*?)\[\/raw\]/gi, "$1");
 
     // prepare code for syntax highlighting
     html = html.replace(/\[code (class="brush\: .+?")\](.+?)\[\/code\]/gi, "<pre $1>$2</pre>");
